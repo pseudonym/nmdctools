@@ -1,5 +1,5 @@
 /*
- * Listen, and send back a static message to anyone that connects.
+ * Listen, and send back the mesage read from stdin if anyone connects.
  *
  * Written by Matt Pearson <mjp64@cornell.edu>.
  *
@@ -22,15 +22,21 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-
-const char* foo =
-	"Sorry, the hub is down. It will be back up shortly.|"
-	;
+#define BUFFER_SIZE 1024 // should be large enough...
 
 int main(int argc, char** argv)
 {
+	char msg[BUFFER_SIZE];
+	int len;
+
 	if(argc < 2) {
 		fprintf(stderr, "Usage: %s listen_port\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	len = fread(msg, 1, BUFFER_SIZE, stdin);
+	if(!feof(stdin)) {
+		fprintf(stderr, "Message too long (stop the sesquipedalian loquaciousness)\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -52,10 +58,9 @@ int main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	const int foolen = strlen(foo);
 	while(1) {
 		int c = accept(listen_fd, NULL, NULL);
-		write(c, foo, foolen);
+		write(c, msg, len);
 		close(c);
 	}
 }
