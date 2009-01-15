@@ -30,7 +30,7 @@ const char* foo =
 int main(int argc, char** argv)
 {
 	if(argc < 2) {
-		printf("Usage: %s listen_port\n", argv[0]);
+		fprintf(stderr, "Usage: %s listen_port\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
@@ -42,13 +42,13 @@ int main(int argc, char** argv)
 	listen_sock.sin_port = htons(atoi(argv[1]));
 
 	if(bind(listen_fd, (struct sockaddr*)&listen_sock, sizeof(struct sockaddr_in)) != 0) {
-		printf("bind() failed: %s\n", strerror(errno));
+		perror("bind() failed");
 		exit(EXIT_FAILURE);
 	}
 
 	// listen
 	if(listen(listen_fd, 5) != 0) {
-		printf("listen() failed: %s\n", strerror(errno));
+		perror("listen() failed");
 		exit(EXIT_FAILURE);
 	}
 
