@@ -29,33 +29,33 @@ const char* foo =
 
 int main(int argc, char** argv)
 {
-    if(argc < 2) {
-        printf("Usage: %s listen_port\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
+	if(argc < 2) {
+		printf("Usage: %s listen_port\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
 
-    int listen_fd = socket(PF_INET, SOCK_STREAM, 0);
-    struct sockaddr_in listen_sock;
-    memset(&listen_sock, 0, sizeof(struct sockaddr_in));
-    listen_sock.sin_family = AF_INET;
-    listen_sock.sin_addr.s_addr = INADDR_ANY;
-    listen_sock.sin_port = htons(atoi(argv[1]));
+	int listen_fd = socket(PF_INET, SOCK_STREAM, 0);
+	struct sockaddr_in listen_sock;
+	memset(&listen_sock, 0, sizeof(struct sockaddr_in));
+	listen_sock.sin_family = AF_INET;
+	listen_sock.sin_addr.s_addr = INADDR_ANY;
+	listen_sock.sin_port = htons(atoi(argv[1]));
 
-    if(bind(listen_fd, (struct sockaddr*)&listen_sock, sizeof(struct sockaddr_in)) != 0) {
-        printf("bind() failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+	if(bind(listen_fd, (struct sockaddr*)&listen_sock, sizeof(struct sockaddr_in)) != 0) {
+		printf("bind() failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
 
 	// listen
-    if(listen(listen_fd, 5) != 0) {
-        printf("listen() failed: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+	if(listen(listen_fd, 5) != 0) {
+		printf("listen() failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
 
 	const int foolen = strlen(foo);
-    while(1) {
-        int c = accept(listen_fd, NULL, NULL);
-        write(c, foo, foolen);
-        close(c);
-    }
+	while(1) {
+		int c = accept(listen_fd, NULL, NULL);
+		write(c, foo, foolen);
+		close(c);
+	}
 }
